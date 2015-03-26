@@ -13,29 +13,6 @@
 #define NUMPIXELS      60
 #define LAST           NUMPIXELS-1
 
-
-class HaloMode {
-  public:
-    HaloMode();
-    int step();
-  protected:
-    virtual int stepInternal();
-    int steps;
-    	
-};
-
-HaloMode::HaloMode() {
-  steps = 0;
-}
-
-class FireMode : public HaloMode {
-  public:
-    
-  
-  int step
-  
-};
-
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
 int delayval = 10;

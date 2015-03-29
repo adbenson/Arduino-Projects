@@ -1,6 +1,7 @@
-// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
-// released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
+
 #include <Adafruit_NeoPixel.h>
+
+#include "HaloMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -11,7 +12,11 @@
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
+
 #define LAST           NUMPIXELS-1
+
+
+HaloMode fireMode;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -21,6 +26,7 @@ double fall = 0.02;
 double dropoff = 0.25;
 double minLevel = 0.15;
 int choose = 120;
+
 double potMax = 850;
 
 int rainbowState = 0;
@@ -47,6 +53,8 @@ void setup() {
     levels[i] = 0; 
     goals[i] = 1;
   }
+  
+  fireMode = HaloMode();
 
   //  Serial.println("Begin");
 }
@@ -205,6 +213,8 @@ uint32_t Wheel(byte WheelPos) {
 }
 
 void loop() { 
+  
+  uint32_t * pix;
 
   double dial = (analogRead(POT_PIN) / potMax);
   int brightness = min(dial * 255, 255);
@@ -217,7 +227,10 @@ void loop() {
   
   switch (mode) {
     case 1: 
-      fire();
+      pix = fireMode.step();
+      for (int i=0; i<NUMPIXELS; i++) {
+          pixels.setPixelColor(i, pix[i]);
+      }
       break;
     case 2: 
       theaterChaseRainbow(); 

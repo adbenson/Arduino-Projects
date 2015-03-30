@@ -16,7 +16,7 @@
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
 int delayval = 10;
-double rise = 0.07;
+double rise = 0.05;
 double fall = 0.02;
 double dropoff = 0.25;
 double minLevel = 0.15;
@@ -85,7 +85,7 @@ void fire() {
     }
 
     levels[i] = level;    
-    pixels.setPixelColor(i, pixels.Color(235 * level, 255 * level * level, 255 * level * level));
+    pixels.setPixelColor(i, pixels.Color(235 * level, 255 * level * level, 40 * level * level * level));
 
   }
 }

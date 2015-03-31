@@ -2,6 +2,13 @@
 #include "HaloMode.h"
 
 HaloMode::HaloMode() {
+  
+        for (int i=0; i<NUMPIXELS; i++) {
+          pixels[i] = 0; 
+          
+          levels[i] = 0; 
+          goals[i] = 1;
+        }
 
 	rise = 0.07;
 	fall = 0.02;
@@ -29,8 +36,8 @@ uint32_t * HaloMode::step() {
     if (r == 0) {// || (i >= 30 && i <= 31 && r < (choose/10))) {
       double goal = random(level * 1000, 1000) / 1000.0;
       goals[i] = 1;        
-//      pullAdjacent(i-1, 1); 
-//      pullAdjacent(i+1, 1); 
+      pullAdjacent(i-1, 1); 
+      pullAdjacent(i+1, 1); 
     }
 
     levels[i] = level;    

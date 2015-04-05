@@ -25,7 +25,7 @@ uint32_t * FireMode::step() {
 
     levels[i] = level;    
 
-    pixels[i] = encodeColor(235 * level, 255 * level * level, 50 * level * level);
+    pixels[i] = rgb(235 * level, 255 * level * level, 50 * level * level);
 
   }
   

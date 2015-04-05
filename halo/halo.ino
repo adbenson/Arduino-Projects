@@ -1,8 +1,10 @@
 
 #include <Adafruit_NeoPixel.h>
 
-#include "HaloMode.h"
 #include "FireMode.h"
+#include "RainbowMode.h"
+#include "ChaseMode.h"
+#include "DiscoMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -16,8 +18,10 @@
 
 #define LAST           NUMPIXELS-1
 
-
-FireMode fireMode;
+FireMode fire;
+ChaseMode chase;
+RainbowMode rainbow;
+DiscoMode disco;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -25,28 +29,24 @@ int delayval = 10;
 
 double potMax = 850;
 
-int rainbowState = 0;
-int chaseState = 0;
 int discoState = 0;
 
-int mode = 1;
-int modes = 3;
+int mode = 4;
+int modes = 4;
 
 boolean hasBeenPressed = false;
 int previousButton;
 
 
-void setup() { 
-//  Serial.begin(9600);
-//  Serial.println("Setup");
-  
+void setup() {   
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   pixels.begin(); // This initializes the NeoPixel library.
-  
-  fireMode = FireMode();
 
-  //  Serial.println("Begin");
+  fire = FireMode();
+  chase = ChaseMode();
+  rainbow = RainbowMode();
+  disco = DiscoMode();
 }
 
 boolean buttonPressed() {
@@ -56,7 +56,6 @@ boolean buttonPressed() {
 
   //If we detected a button press last cycle and it's still pressed, go for it!
   if (hasBeenPressed && button == LOW) {
-    //    Serial.println("Still pressed");
     pressed = true;
     //Reset the watcher
     hasBeenPressed = false;
@@ -64,103 +63,12 @@ boolean buttonPressed() {
 
   //The button just went down. Don't do anything until we've confirmed it's still down next cycle.
   if (button == LOW && previousButton == HIGH) {
-    //    Serial.println("Press started");
     hasBeenPressed = true;
   }
 
   previousButton = button;
 
   return pressed;
-}
-
-// Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle() {
-  if (rainbowState >= 256*5) {
-    rainbowState = 0; 
-  }
-
-  for(int i=0; i< NUMPIXELS; i++) {
-    pixels.setPixelColor(i, Wheel(((i * 256 / NUMPIXELS) + rainbowState) & 255));
-  }
-
-  rainbowState++;
-}
-
-//Theatre-style crawling lights with rainbow effect
-void theaterChaseRainbow() {
-  if (chaseState >= 6 * 3) {
-    chaseState = 0;
-  }
-
-  uint32_t color;
-  for (int i=0; i < NUMPIXELS; i++) {
-    int offset = (i + (chaseState/3)) % 6;
-    switch (offset) {
-    case 0: 
-      color = pixels.Color(127, 0, 0); 
-      break;
-    case 1: 
-      color = pixels.Color(127, 63, 0); 
-      break;
-    case 2: 
-      color = pixels.Color(127, 127, 0); 
-      break;
-    case 3: 
-      color = pixels.Color(0, 127, 0); 
-      break;
-    case 4: 
-      color = pixels.Color(0, 0, 255); 
-      break;
-    case 5: 
-      color = pixels.Color(63, 0, 255); 
-      break;
-    }
-    pixels.setPixelColor(i, color);
-  }
-
-  chaseState++;
-}
-
-int quadrant(int i) {
-   return (i / NUMPIXELS) / 4;
-}
-
-//Theatre-style crawling lights with rainbow effect
-void disco() {
-  if (discoState > 10) {
-    discoState = 0;
-  }
-
-  uint32_t color;
-  for (int i=0; i < NUMPIXELS; i++) {   
-    if ((quadrant(i) % 2) != (discoState / 5)) {
-      int n = (i + discoState) % 255;
-      color = pixels.Color(255 - n, n, 255);
-    }
-    else {
-      color = 0;  
-    }
-    pixels.setPixelColor(i, color);
-  }
-
-  discoState++;
-}
-
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-uint32_t Wheel(byte WheelPos) {
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) {
-    return pixels.Color(85 - WheelPos, 0, WheelPos * 3);
-  } 
-  else if(WheelPos < 170) {
-    WheelPos -= 85;
-    return pixels.Color(0, WheelPos * 1.5, 255 - WheelPos * 3);
-  } 
-  else {
-    WheelPos -= 170;
-    return pixels.Color(WheelPos, 127 - WheelPos * 1.5,   0);
-  }
 }
 
 void loop() { 
@@ -172,29 +80,30 @@ void loop() {
   pixels.setBrightness(brightness);
 
   if (buttonPressed()) {
-    mode = (mode == modes)? 1 : mode + 1;
-//    Serial.println(mode);
+    mode++;
+    if (mode > modes) {
+       mode = 1;
+    }
   }
   
   switch (mode) {
     case 1: 
-      pix = fireMode.step();
-      for (int i=0; i<NUMPIXELS; i++) {
-          pixels.setPixelColor(i, pix[i]);
-      }
+      pix = fire.step();
       break;
     case 2: 
-      theaterChaseRainbow(); 
+      pix = chase.step();
       break;
     case 3: 
-      rainbowCycle();
+      pix = rainbow.step();
       break;
     case 4: 
-      disco();
-      break;
+      pix = disco.step();
+  }
+  
+  for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
   }
 
-  //  Serial.println("Loop");
   pixels.show(); // This sends the updated pixel color to the hardware.
 
   delay(delayval); // Delay for a period of time (in milliseconds).

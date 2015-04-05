@@ -12,7 +12,8 @@ class HaloMode {
 		
 		virtual uint32_t * step() = 0;
 
-                static uint32_t encodeColor(uint8_t r, uint8_t g, uint8_t b);
+                static uint32_t rgb(uint8_t r, uint8_t g, uint8_t b);
+                
                 
 	protected:
                 uint32_t pixels[NUMPIXELS];

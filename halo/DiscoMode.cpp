@@ -3,18 +3,27 @@
 
 uint32_t * DiscoMode::step() {
   
-  if (discoState > 10) {
+  if (discoState > 1024) {
     discoState = 0;
   }
+  
+  int offset = discoState / 1;
+  
+  int state = discoState / 4;
+  
+  int mode = discoState / 32;
 
   uint32_t color;
-  for (int i=0; i < NUMPIXELS; i++) {   
-    if ((quadrant(i) % 2) != (discoState / 5)) {
-      int n = (i + discoState) % 255;
-      color = rgb(255 - n, n, 255);
-    }
-    else {
-      color = 0;  
+  for (int i=0; i < NUMPIXELS; i++) {
+   
+    int iOffset = ((offset / 32) %2 == 0)? i + offset : i - offset;
+    
+    int quad = quadrant(iOffset);
+    
+    color = hue((discoState / 128.0) * 255 + quad * (255.0 / 4.0));
+    
+    if (quad % 2 == state % 2) {
+      color = 0;
     }
     
     pixels[i] = color;
@@ -27,5 +36,5 @@ uint32_t * DiscoMode::step() {
 }
 
 int DiscoMode::quadrant(int i) {
-   return (i / NUMPIXELS) / 4;
+   return (int)(((float)i / NUMPIXELS) * 4) % 4;
 }

@@ -35,17 +35,12 @@ boolean hasBeenPressed = false;
 int previousButton;
 
 
-void setup() { 
-//  Serial.begin(9600);
-//  Serial.println("Setup");
-  
+void setup() {   
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   pixels.begin(); // This initializes the NeoPixel library.
   
   fire = FireMode();
-
-//  Serial.println("Begin");
 }
 
 boolean buttonPressed() {
@@ -55,7 +50,6 @@ boolean buttonPressed() {
 
   //If we detected a button press last cycle and it's still pressed, go for it!
   if (hasBeenPressed && button == LOW) {
-    //    Serial.println("Still pressed");
     pressed = true;
     //Reset the watcher
     hasBeenPressed = false;
@@ -63,7 +57,6 @@ boolean buttonPressed() {
 
   //The button just went down. Don't do anything until we've confirmed it's still down next cycle.
   if (button == LOW && previousButton == HIGH) {
-    //    Serial.println("Press started");
     hasBeenPressed = true;
   }
 
@@ -172,7 +165,6 @@ void loop() {
 
   if (buttonPressed()) {
     mode = (mode == modes)? 1 : mode + 1;
-//    Serial.println(mode);
   }
   
   switch (mode) {
@@ -193,7 +185,6 @@ void loop() {
       break;
   }
 
-  //  Serial.println("Loop");
   pixels.show(); // This sends the updated pixel color to the hardware.
 
   delay(delayval); // Delay for a period of time (in milliseconds).

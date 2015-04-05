@@ -1,7 +1,6 @@
 
 #include <Adafruit_NeoPixel.h>
 
-#include "HaloMode.h"
 #include "FireMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?

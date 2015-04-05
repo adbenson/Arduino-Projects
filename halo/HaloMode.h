@@ -17,7 +17,7 @@ class HaloMode {
                 static uint32_t hue(byte hue);
                 
 	protected:
-                uint32_t pixels[NUMPIXELS];
+                static uint32_t pixels[NUMPIXELS];
 };
 
 #endif

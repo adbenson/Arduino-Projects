@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "HaloMode.h"
 
+uint32_t HaloMode::pixels[NUMPIXELS];
+
 HaloMode::HaloMode() {
   
         for (int i=0; i<NUMPIXELS; i++) {

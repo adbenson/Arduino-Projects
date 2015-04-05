@@ -2,6 +2,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "FireMode.h"
+#include "RainbowMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -17,6 +18,7 @@
 
 
 FireMode fire;
+RainbowMode rainbow;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -41,6 +43,7 @@ void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   
   fire = FireMode();
+  rainbow = RainbowMode();
 }
 
 boolean buttonPressed() {
@@ -63,19 +66,6 @@ boolean buttonPressed() {
   previousButton = button;
 
   return pressed;
-}
-
-// Slightly different, this makes the rainbow equally distributed throughout
-void rainbowCycle() {
-  if (rainbowState >= 256*5) {
-    rainbowState = 0; 
-  }
-
-  for(int i=0; i< NUMPIXELS; i++) {
-    pixels.setPixelColor(i, Wheel(((i * 256 / NUMPIXELS) + rainbowState) & 255));
-  }
-
-  rainbowState++;
 }
 
 //Theatre-style crawling lights with rainbow effect
@@ -138,23 +128,6 @@ void disco() {
   discoState++;
 }
 
-// Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-uint32_t Wheel(byte WheelPos) {
-  WheelPos = 255 - WheelPos;
-  if(WheelPos < 85) {
-    return pixels.Color(85 - WheelPos, 0, WheelPos * 3);
-  } 
-  else if(WheelPos < 170) {
-    WheelPos -= 85;
-    return pixels.Color(0, WheelPos * 1.5, 255 - WheelPos * 3);
-  } 
-  else {
-    WheelPos -= 170;
-    return pixels.Color(WheelPos, 127 - WheelPos * 1.5,   0);
-  }
-}
-
 void loop() { 
   
   uint32_t * pix;
@@ -178,7 +151,10 @@ void loop() {
       theaterChaseRainbow(); 
       break;
     case 3: 
-      rainbowCycle();
+      pix = rainbow.step();
+      for (int i=0; i<NUMPIXELS; i++) {
+          pixels.setPixelColor(i, pix[i]);
+      }
       break;
     case 4: 
       disco();

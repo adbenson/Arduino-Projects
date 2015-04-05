@@ -10,23 +10,12 @@ class HaloMode {
 	public:
 		HaloMode();
 		
-		uint32_t * step();
+		virtual uint32_t * step() = 0;
 
                 static uint32_t encodeColor(uint8_t r, uint8_t g, uint8_t b);
                 
-	private:
-		void pullAdjacent(int i, double pull);
-	
+	protected:
                 uint32_t pixels[NUMPIXELS];
-                
-		double levels [NUMPIXELS];
-		double goals [NUMPIXELS];
-		
-		double rise;
-		double fall;
-		double dropoff;
-		double minLevel;
-		int choose;
 };
 
 #endif

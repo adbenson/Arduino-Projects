@@ -1,23 +1,6 @@
 #include "Arduino.h"
 #include "FireMode.h"
 
-FireMode::FireMode() {
-  
-        for (int i=0; i<NUMPIXELS; i++) {
-          pixels[i] = 0; 
-          
-          levels[i] = 0; 
-          goals[i] = 1;
-        }
-
-	rise = 0.05;
-	fall = 0.02;
-	dropoff = 0.25;
-	minLevel = 0.15;
-	choose = 120;
-
-}
-
 uint32_t * FireMode::step() {
 
   for(int i=0;i<NUMPIXELS;i++){
@@ -48,10 +31,6 @@ uint32_t * FireMode::step() {
   
   return pixels;
 
-}
-
-uint32_t FireMode::encodeColor(uint8_t r, uint8_t g, uint8_t b) {
-  return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
 }
 
 void FireMode::pullAdjacent(int i, double pull) {

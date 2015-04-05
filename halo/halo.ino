@@ -3,6 +3,7 @@
 
 #include "FireMode.h"
 #include "RainbowMode.h"
+#include "ChaseMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -16,8 +17,8 @@
 
 #define LAST           NUMPIXELS-1
 
-
 FireMode fire;
+ChaseMode chase;
 RainbowMode rainbow;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
@@ -26,8 +27,6 @@ int delayval = 10;
 
 double potMax = 850;
 
-int rainbowState = 0;
-int chaseState = 0;
 int discoState = 0;
 
 int mode = 1;
@@ -43,6 +42,7 @@ void setup() {
   pixels.begin(); // This initializes the NeoPixel library.
   
   fire = FireMode();
+  chase = ChaseMode();
   rainbow = RainbowMode();
 }
 
@@ -66,41 +66,6 @@ boolean buttonPressed() {
   previousButton = button;
 
   return pressed;
-}
-
-//Theatre-style crawling lights with rainbow effect
-void theaterChaseRainbow() {
-  if (chaseState >= 6 * 3) {
-    chaseState = 0;
-  }
-
-  uint32_t color;
-  for (int i=0; i < NUMPIXELS; i++) {
-    int offset = (i + (chaseState/3)) % 6;
-    switch (offset) {
-    case 0: 
-      color = pixels.Color(127, 0, 0); 
-      break;
-    case 1: 
-      color = pixels.Color(127, 63, 0); 
-      break;
-    case 2: 
-      color = pixels.Color(127, 127, 0); 
-      break;
-    case 3: 
-      color = pixels.Color(0, 127, 0); 
-      break;
-    case 4: 
-      color = pixels.Color(0, 0, 255); 
-      break;
-    case 5: 
-      color = pixels.Color(63, 0, 255); 
-      break;
-    }
-    pixels.setPixelColor(i, color);
-  }
-
-  chaseState++;
 }
 
 int quadrant(int i) {
@@ -148,7 +113,10 @@ void loop() {
       }
       break;
     case 2: 
-      theaterChaseRainbow(); 
+      pix = chase.step();
+        for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
+  }
       break;
     case 3: 
       pix = rainbow.step();

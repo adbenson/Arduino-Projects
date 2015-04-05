@@ -16,7 +16,7 @@
 #define LAST           NUMPIXELS-1
 
 
-FireMode fireMode;
+FireMode fire;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -43,7 +43,7 @@ void setup() {
 
   pixels.begin(); // This initializes the NeoPixel library.
   
-  fireMode = FireMode();
+  fire = FireMode();
 
 //  Serial.println("Begin");
 }
@@ -177,7 +177,7 @@ void loop() {
   
   switch (mode) {
     case 1: 
-      pix = fireMode.step();
+      pix = fire.step();
       for (int i=0; i<NUMPIXELS; i++) {
           pixels.setPixelColor(i, pix[i]);
       }

@@ -31,7 +31,7 @@ double potMax = 850;
 
 int discoState = 0;
 
-int mode = 1;
+int mode = 4;
 int modes = 4;
 
 boolean hasBeenPressed = false;
@@ -80,38 +80,29 @@ void loop() {
   pixels.setBrightness(brightness);
 
   if (buttonPressed()) {
-    mode = (mode == modes)? 1 : mode + 1;
+    mode++;
+    if (mode > modes) {
+       mode = 1;
+    }
   }
   
   switch (mode) {
     case 1: 
       pix = fire.step();
-        for (int i=0; i<NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pix[i]);
-  }
       break;
     case 2: 
       pix = chase.step();
-        for (int i=0; i<NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pix[i]);
-  }
       break;
     case 3: 
       pix = rainbow.step();
-        for (int i=0; i<NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pix[i]);
-  }
       break;
     case 4: 
       pix = disco.step();
-        for (int i=0; i<NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pix[i]);
-        }
   }
-//  
-//  for (int i=0; i<NUMPIXELS; i++) {
-//    pixels.setPixelColor(i, pix[i]);
-//  }
+  
+  for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
+  }
 
   pixels.show(); // This sends the updated pixel color to the hardware.
 

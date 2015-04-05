@@ -17,16 +17,14 @@ uint32_t HaloMode::rgb(uint8_t r, uint8_t g, uint8_t b) {
 uint32_t HaloMode::hue(byte hue) {
   hue = 255 - hue;
   
-  if(hue < 85) {
-    return rgb(85 - hue, 0, hue * 3);
-  } 
-  else if(hue < 170) {
+  if (hue < 85) {
+    return rgb(255 - hue * 3, 0, hue * 3);
+  } else if (hue < 170) {
     hue -= 85;
-    return rgb(0, hue * 1.5, 255 - hue * 3);
-  } 
-  else {
+    return rgb(0, hue * 3, 255 - hue * 3);
+  } else {
     hue -= 170;
-    return rgb(hue, 127 - hue * 1.5,   0);
+    return rgb(hue * 3, 255 - hue * 3, 0);
   }
 }
 

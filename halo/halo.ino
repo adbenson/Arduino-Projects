@@ -4,6 +4,7 @@
 #include "FireMode.h"
 #include "RainbowMode.h"
 #include "ChaseMode.h"
+#include "DiscoMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -20,6 +21,7 @@
 FireMode fire;
 ChaseMode chase;
 RainbowMode rainbow;
+DiscoMode disco;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
@@ -30,7 +32,7 @@ double potMax = 850;
 int discoState = 0;
 
 int mode = 1;
-int modes = 3;
+int modes = 4;
 
 boolean hasBeenPressed = false;
 int previousButton;
@@ -44,6 +46,7 @@ void setup() {
   fire = FireMode();
   chase = ChaseMode();
   rainbow = RainbowMode();
+  disco = DiscoMode();
 }
 
 boolean buttonPressed() {
@@ -68,31 +71,6 @@ boolean buttonPressed() {
   return pressed;
 }
 
-int quadrant(int i) {
-   return (i / NUMPIXELS) / 4;
-}
-
-//Theatre-style crawling lights with rainbow effect
-void disco() {
-  if (discoState > 10) {
-    discoState = 0;
-  }
-
-  uint32_t color;
-  for (int i=0; i < NUMPIXELS; i++) {   
-    if ((quadrant(i) % 2) != (discoState / 5)) {
-      int n = (i + discoState) % 255;
-      color = pixels.Color(255 - n, n, 255);
-    }
-    else {
-      color = 0;  
-    }
-    pixels.setPixelColor(i, color);
-  }
-
-  discoState++;
-}
-
 void loop() { 
   
   uint32_t * pix;
@@ -108,9 +86,9 @@ void loop() {
   switch (mode) {
     case 1: 
       pix = fire.step();
-      for (int i=0; i<NUMPIXELS; i++) {
-          pixels.setPixelColor(i, pix[i]);
-      }
+        for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
+  }
       break;
     case 2: 
       pix = chase.step();
@@ -120,14 +98,20 @@ void loop() {
       break;
     case 3: 
       pix = rainbow.step();
-      for (int i=0; i<NUMPIXELS; i++) {
-          pixels.setPixelColor(i, pix[i]);
-      }
+        for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
+  }
       break;
     case 4: 
-      disco();
-      break;
+      pix = disco.step();
+        for (int i=0; i<NUMPIXELS; i++) {
+    pixels.setPixelColor(i, pix[i]);
+        }
   }
+//  
+//  for (int i=0; i<NUMPIXELS; i++) {
+//    pixels.setPixelColor(i, pix[i]);
+//  }
 
   pixels.show(); // This sends the updated pixel color to the hardware.
 

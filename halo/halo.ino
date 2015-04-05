@@ -1,6 +1,8 @@
-// NeoPixel Ring simple sketch (c) 2013 Shae Erisson
-// released under the GPLv3 license to match the rest of the AdaFruit NeoPixel library
+
 #include <Adafruit_NeoPixel.h>
+
+#include "HaloMode.h"
+#include "FireMode.h"
 
 // Which pin on the Arduino is connected to the NeoPixels?
 #define OUT_PIN      8
@@ -11,24 +13,21 @@
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
+
 #define LAST           NUMPIXELS-1
+
+
+FireMode fireMode;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
 
 int delayval = 10;
-double rise = 0.05;
-double fall = 0.02;
-double dropoff = 0.25;
-double minLevel = 0.15;
-int choose = 120;
+
 double potMax = 850;
 
 int rainbowState = 0;
 int chaseState = 0;
 int discoState = 0;
-
-double levels [NUMPIXELS];
-double goals [NUMPIXELS];
 
 int mode = 1;
 int modes = 3;
@@ -38,56 +37,16 @@ int previousButton;
 
 
 void setup() { 
-  //  Serial.begin(9600);
+//  Serial.begin(9600);
+//  Serial.println("Setup");
+  
   pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   pixels.begin(); // This initializes the NeoPixel library.
-
-  for(int i=0; i<NUMPIXELS; i++) {
-    levels[i] = 0; 
-    goals[i] = 1;
-  }
+  
+  fireMode = FireMode();
 
   //  Serial.println("Begin");
-}
-
-void pullAdjacent(int i, double pull) {
-  i = ((i<0)? LAST : i);
-  i = (i>LAST)? 0 : i;
-
-  double level = pull - dropoff;
-  if (goals[i] < level) {
-    goals[i] = level;
-    pullAdjacent(i-1, level);
-    pullAdjacent(i+1, level); 
-  }
-}
-
-void fire() {
-  for(int i=0;i<NUMPIXELS;i++){
-    double level = levels[i];
-
-    if (level < goals[i]) {
-      level = min(level + rise, 1);
-    }
-    else {
-      goals[i] = 0;
-      level = max(level - fall, minLevel);
-    }
-
-    //    Serial.println(levels[i]);
-    int r = random(choose);
-    if (r == 0 || (i >= 30 && i <= 31 && r < (choose/10))) {
-      double goal = random(level * 1000, 1000) / 1000.0;
-      goals[i] = 1;        
-      pullAdjacent(i-1, 1); 
-      pullAdjacent(i+1, 1); 
-    }
-
-    levels[i] = level;    
-    pixels.setPixelColor(i, pixels.Color(235 * level, 255 * level * level, 40 * level * level * level));
-
-  }
 }
 
 boolean buttonPressed() {
@@ -205,6 +164,8 @@ uint32_t Wheel(byte WheelPos) {
 }
 
 void loop() { 
+  
+  uint32_t * pix;
 
   double dial = (analogRead(POT_PIN) / potMax);
   int brightness = min(dial * 255, 255);
@@ -212,12 +173,15 @@ void loop() {
 
   if (buttonPressed()) {
     mode = (mode == modes)? 1 : mode + 1;
-    Serial.println(mode);
+//    Serial.println(mode);
   }
   
   switch (mode) {
     case 1: 
-      fire();
+      pix = fireMode.step();
+      for (int i=0; i<NUMPIXELS; i++) {
+          pixels.setPixelColor(i, pix[i]);
+      }
       break;
     case 2: 
       theaterChaseRainbow(); 

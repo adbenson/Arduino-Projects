@@ -6,12 +6,14 @@
 #include "ChaseMode.h"
 #include "DiscoMode.h"
 
-// Which pin on the Arduino is connected to the NeoPixels?
-#define OUT_PIN      8
+#define HALO_OUT      3
 
-#define BUTTON_PIN   4 
+#define BUTTON_A  13
+#define BUTTON_B  12 
+#define BUTTON_C  11 
+#define BUTTON_D  10 
 
-#define POT_PIN      A0
+#define POT_PIN  A0
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
@@ -23,7 +25,7 @@ ChaseMode chase;
 RainbowMode rainbow;
 DiscoMode disco;
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, HALO_OUT, NEO_GRB + NEO_KHZ800);
 
 int delayval = 10;
 
@@ -31,7 +33,7 @@ double potMax = 850;
 
 int discoState = 0;
 
-int mode = 4;
+int mode = 1;
 int modes = 4;
 
 boolean hasBeenPressed = false;
@@ -39,7 +41,7 @@ int previousButton;
 
 
 void setup() {   
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_C, INPUT);
 
   pixels.begin(); // This initializes the NeoPixel library.
 
@@ -52,7 +54,7 @@ void setup() {
 boolean buttonPressed() {
   boolean pressed = false;
 
-  int button = digitalRead(BUTTON_PIN);
+  int button = digitalRead(BUTTON_C);
 
   //If we detected a button press last cycle and it's still pressed, go for it!
   if (hasBeenPressed && button == LOW) {
@@ -76,7 +78,7 @@ void loop() {
   uint32_t * pix;
 
   double dial = (analogRead(POT_PIN) / potMax);
-  int brightness = min(dial * 255, 255);
+  int brightness = 255;//min(dial * 255, 255);
   pixels.setBrightness(brightness);
 
   if (buttonPressed()) {

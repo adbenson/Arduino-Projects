@@ -31,7 +31,7 @@ ChaseMode chase;
 RainbowMode rainbow;
 DiscoMode disco;
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, HALO_OUT, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel halo = Adafruit_NeoPixel(NUMPIXELS, HALO_OUT, NEO_GRB + NEO_KHZ800);
 
 int delayval = 10;
 
@@ -51,7 +51,7 @@ void setup() {
   
   pinMode(DIAG, OUTPUT);
 
-  pixels.begin(); // This initializes the NeoPixel library.
+  halo.begin(); // This initializes the NeoPixel library.
 
   fire = FireMode();
   chase = ChaseMode();
@@ -87,7 +87,7 @@ void loop() {
 
 //  double dial = (analogRead(POT_PIN) / potMax);
   int brightness = 255;//min(dial * 255, 255);
-  pixels.setBrightness(brightness);
+  halo.setBrightness(brightness);
 
   if (buttonPressed()) {
     mode++;
@@ -111,10 +111,10 @@ void loop() {
   }
   
   for (int i=0; i<NUMPIXELS; i++) {
-    pixels.setPixelColor(i, pix[i]);
+    halo.setPixelColor(i, pix[i]);
   }
 
-  pixels.show(); // This sends the updated pixel color to the hardware.
+  halo.show(); // This sends the updated pixel color to the hardware.
 
   delay(delayval); // Delay for a period of time (in milliseconds).
 }

@@ -7,6 +7,8 @@
 #include "DiscoMode.h"
 
 #define HALO_OUT      3
+#define LWING_OUT     4
+#define RWING_OUT     5
 
 #define BUTTON_A  10
 #define BUTTON_B  11 

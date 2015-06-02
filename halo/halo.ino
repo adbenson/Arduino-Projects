@@ -8,17 +8,21 @@
 
 #define HALO_OUT      3
 
-#define BUTTON_A  13
-#define BUTTON_B  12 
-#define BUTTON_C  11 
-#define BUTTON_D  10 
+#define BUTTON_A  10
+#define BUTTON_B  11 
+#define BUTTON_C  12 
+#define BUTTON_D  13 
 
-#define POT_PIN  A0
+#define DIAG  13 
+
+#define POT_PIN  A5
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
 
 #define LAST           NUMPIXELS-1
+
+const byte BUTTON_THRESHOLD = 50;
 
 FireMode fire;
 ChaseMode chase;
@@ -41,7 +45,9 @@ int previousButton;
 
 
 void setup() {   
-  pinMode(BUTTON_C, INPUT);
+  pinMode(BUTTON_C, INPUT); 
+  
+  pinMode(DIAG, OUTPUT);
 
   pixels.begin(); // This initializes the NeoPixel library.
 
@@ -56,8 +62,8 @@ boolean buttonPressed() {
 
   int button = digitalRead(BUTTON_C);
 
-  //If we detected a button press last cycle and it's still pressed, go for it!
-  if (hasBeenPressed && button == LOW) {
+  //If we detected a button press last cycle  and it's still pressed, go for it!
+  if (hasBeenPressed && button == HIGH) {
     pressed = true;
     //Reset the watcher
     hasBeenPressed = false;
@@ -77,7 +83,7 @@ void loop() {
   
   uint32_t * pix;
 
-  double dial = (analogRead(POT_PIN) / potMax);
+//  double dial = (analogRead(POT_PIN) / potMax);
   int brightness = 255;//min(dial * 255, 255);
   pixels.setBrightness(brightness);
 

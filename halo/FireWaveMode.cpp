@@ -8,8 +8,13 @@ uint32_t * FireWaveMode::step() {
 
     if (level < goals[i]) {
       level = min(level + rise, 1);
+      if (level > 0.99) {
+        
+        pullAdjacent(i+1, 1 + dropoff); 
+      }
     }
     else {
+
       goals[i] = 0;
       level = max(level - fall, minLevel);
     }

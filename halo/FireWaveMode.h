@@ -16,11 +16,11 @@ class FireWaveMode : public HaloMode {
                           goals[i] = 1;
                         }
                 
-                	rise = 0.05;
-                	fall = 0.02;
-                	dropoff = 0.25;
+                	rise = 0.10;
+                	fall = 0.04;
+                	dropoff = 0.1;
                 	minLevel = 0.15;
-                	choose = 120;
+                	choose = 500;
 
                 };
 		

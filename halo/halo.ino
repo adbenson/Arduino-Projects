@@ -36,10 +36,6 @@ Adafruit_NeoPixel wing = Adafruit_NeoPixel(NUMPIXELS, LWING_OUT, NEO_GRB + NEO_K
 
 int delayval = 10;
 
-double potMax = 850;
-
-int discoState = 0;
-
 int mode = 1;
 int modes = 4;
 

@@ -84,8 +84,7 @@ void loop() {
   
   uint32_t * pix; 
 
-//  double dial = (analogRead(POT_PIN) / potMax);
-  int brightness = 255;//min(dial * 255, 255);
+  int brightness = map(analogRead(POT_PIN), 0, 1024, 255, 0);
   halo.setBrightness(brightness);
   wing.setBrightness(brightness);
 

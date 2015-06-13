@@ -26,7 +26,14 @@
 
 #define LAST           NUMPIXELS-1
 
-const byte BUTTON_THRESHOLD = 50;
+#define BUTTONS 4
+
+#define PIXEL_DELAY 10
+#define SLEEP_DELAY  200
+
+#define MODES 4
+
+boolean running = true;
 
 FireMode fire;
 ChaseMode chase;
@@ -36,14 +43,9 @@ DiscoMode disco;
 Adafruit_NeoPixel halo = Adafruit_NeoPixel(NUMPIXELS, HALO_OUT, NEO_GRB + NEO_KHZ800);
 Adafruit_NeoPixel wing = Adafruit_NeoPixel(NUMPIXELS, LWING_OUT, NEO_GRB + NEO_KHZ800);
 
-int delayval = 10;
-
 int mode = 1;
-int modes = 4;
 
-boolean hasBeenPressed = false;
-int previousButton;
-
+boolean buttonHistory[4][3];
 
 void setup() {   
   
@@ -56,45 +58,81 @@ void setup() {
   chase = ChaseMode();
   rainbow = RainbowMode();
   disco = DiscoMode();
+  
+  for(int button = 0; button < BUTTONS; button++) {
+    for (int state = 0; state < 2; state++) {
+      buttonHistory[button][state] = false;
+    }
+  }
 }
 
-boolean buttonPressed() {
-  boolean pressed = false;
-
-  int button = digitalRead(BUTTON_C);
-
-  //If we detected a button press last cycle  and it's still pressed, go for it!
-  if (hasBeenPressed && button == HIGH) {
-    pressed = true;
-    //Reset the watcher
-    hasBeenPressed = false;
-  }
-
-  //The button just went down. Don't do anything until we've confirmed it's still down next cycle.
-  if (button == LOW && previousButton == HIGH) {
-    hasBeenPressed = true;
-  }
-
-  previousButton = button;
+boolean buttonPressed(int button) {
+  
+  //Only return true once for each press, and only after it has been pressed for at least one cycle.
+  boolean pressed = buttonHistory[button][0] && buttonHistory[button][1] && !buttonHistory[button][2]; 
 
   return pressed;
 }
 
-void loop() { 
+void updateButtonState() {
+  for(int button = 0; button < BUTTONS; button++) {
+    boolean current = analogRead(button) > BUTTON_THRESHOLD;
   
-  uint32_t * pix; 
+    buttonHistory[button][2] = buttonHistory[button][1];
+    buttonHistory[button][1] = buttonHistory[button][0];
+    buttonHistory[button][0] = current;
+  }
+}
 
-  int brightness = map(analogRead(POT_PIN), 0, 1024, 255, 0);
-  halo.setBrightness(brightness);
-  wing.setBrightness(brightness);
+void updatePower() {
+ 
+  if (buttonPressed(BUTTON_A)) {
+    running = !running; 
+    
+      if (!running) {
+        halo.setBrightness(0);
+        halo.show();
+        wing.setBrightness(0);
+        wing.show();
+      }
+  }
+   
+}
 
-  if (buttonPressed()) {
+
+void updateMode() {
+ 
+  if (buttonPressed(BUTTON_C)) {
     mode++;
-    if (mode > modes) {
+    if (mode > MODES) {
        mode = 1;
     }
   }
+   
+}
+
+void loop() { 
   
+  updateButtonState();
+  
+  updatePower();
+  
+  if (running) {
+    updateMode();
+    updatePixels();  
+  }
+  
+  delay(PIXEL_DELAY);
+}
+
+void updatePixels() {
+  uint32_t * pix; 
+
+  int potReading = map(analogRead(POT_PIN), 0, 1024, 265, 50);
+  int brightness = constrain(potReading, 0, 255);
+  halo.setBrightness(brightness);
+  wing.setBrightness(brightness);
+
   switch (mode) {
     case 1: 
       pix = fire.step();
@@ -116,8 +154,6 @@ void loop() {
 
   halo.show(); // This sends the updated pixel color to the hardware.
   wing.show(); // This sends the updated pixel color to the hardware.
-
-  delay(delayval); // Delay for a period of time (in milliseconds).
 }
 
 

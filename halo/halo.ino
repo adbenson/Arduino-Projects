@@ -128,7 +128,7 @@ void loop() {
 void updatePixels() {
   uint32_t * pix; 
 
-  int potReading = map(analogRead(POT_PIN), 0, 1024, 265, 50);
+  int potReading = map(analogRead(POT_PIN), 0, 1024, 265, 10);
   int brightness = constrain(potReading, 0, 255);
   halo.setBrightness(brightness);
   wing.setBrightness(brightness);

@@ -10,14 +10,16 @@
 #define LWING_OUT     4
 #define RWING_OUT     5
 
-#define BUTTON_A  10
-#define BUTTON_B  11 
-#define BUTTON_C  12 
-#define BUTTON_D  13 
+#define BUTTON_A  0
+#define BUTTON_B  1 
+#define BUTTON_C  2 
+#define BUTTON_D  3 
 
 #define DIAG  13 
 
 #define POT_PIN  A5
+
+#define BUTTON_THRESHOLD 50
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
@@ -44,7 +46,6 @@ int previousButton;
 
 
 void setup() {   
-  pinMode(BUTTON_C, INPUT); 
   
   pinMode(DIAG, OUTPUT);
 

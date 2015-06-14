@@ -6,6 +6,7 @@
 
 #define NUMPIXELS      60
 #define LAST           NUMPIXELS-1
+#define MAX            32767
 
 class FireWaveMode : public HaloMode {
 	public:
@@ -13,28 +14,28 @@ class FireWaveMode : public HaloMode {
   
                         for (int i=0; i<NUMPIXELS; i++) {
                           levels[i] = 0; 
-                          goals[i] = 1;
+                          goals[i] = MAX;
                         }
                 
-                	rise = 0.10;
-                	fall = 0.04;
-                	dropoff = 0.1;
-                	minLevel = 0.15;
+                	rise = 0.10 * MAX;
+                	fall = 0.04 * MAX;
+                	dropoff = 0.1 * MAX;
+                	minLevel = 0.15 * MAX;
                 	choose = 500;
 
                 };
 		
 		void step(Adafruit_NeoPixel* pixels);
 	private:
-		void pullAdjacent(int i, double pull);
+		void pullAdjacent(int i, int pull);
                 
-		float levels [NUMPIXELS];
-		float goals [NUMPIXELS];
+		int levels [NUMPIXELS];
+		int goals [NUMPIXELS];
 		
-		double rise;
-		double fall;
-		double dropoff;
-		double minLevel;
+		int rise;
+		int fall;
+		int dropoff;
+		int minLevel;
 		int choose;
 };
 

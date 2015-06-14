@@ -19,10 +19,7 @@ void FireWaveMode::step(Adafruit_NeoPixel* pixels) {
       level = max(level - fall, minLevel);
     }
 
-    //    Serial.println(levels[i]);
     int r = random(choose);
-    if (r == 0) {// || (i >= 30 && i <= 31 && r < (choose/10))) {
-      double goal = random(level * 1000, 1000) / 1000.0;
       goals[i] = 1;        
       pullAdjacent(i-1, 1); 
       pullAdjacent(i+1, 1); 

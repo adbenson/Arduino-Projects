@@ -24,12 +24,12 @@ class FireWaveMode : public HaloMode {
 
                 };
 		
-		uint32_t * step();
+		void step(Adafruit_NeoPixel* pixels);
 	private:
 		void pullAdjacent(int i, double pull);
                 
-		double levels [NUMPIXELS];
-		double goals [NUMPIXELS];
+		float levels [NUMPIXELS];
+		float goals [NUMPIXELS];
 		
 		double rise;
 		double fall;

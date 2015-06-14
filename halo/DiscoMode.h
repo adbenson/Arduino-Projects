@@ -13,7 +13,7 @@ class DiscoMode : public HaloMode {
                    discoState = 0;
                 };
 		
-		uint32_t * step();
+		void step(Adafruit_NeoPixel* pixels);
 	private:
                 int discoState;
                 

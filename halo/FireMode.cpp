@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "FireMode.h"
 
-uint32_t * FireMode::step() {
+void FireMode::step(Adafruit_NeoPixel* pixels) {
 
   for(int i=0;i<NUMPIXELS;i++){
     double level = levels[i];
@@ -25,12 +25,11 @@ uint32_t * FireMode::step() {
 
     levels[i] = level;    
 
-    pixels[i] = rgb(235 * level, 255 * level * level, 50 * level * level);
+    uint32_t color = rgb(235 * level, 255 * level * level, 50 * level * level);
+    pixels->setPixelColor(i, color);
 
   }
   
-  return pixels;
-
 }
 
 void FireMode::pullAdjacent(int i, double pull) {

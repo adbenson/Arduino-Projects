@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "ChaseMode.h"
 
-uint32_t * ChaseMode::step() {
+void ChaseMode::step(Adafruit_NeoPixel* pixels) {
   
   if (chaseState >= 6 * 3) {
     chaseState = 0;
@@ -31,11 +31,9 @@ uint32_t * ChaseMode::step() {
       break;
     }
     
-    pixels[i] = color;
+    pixels->setPixelColor(i, color);
   }
 
   chaseState++;
-
-  return pixels;
 
 }

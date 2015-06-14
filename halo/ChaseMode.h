@@ -13,7 +13,7 @@ class ChaseMode : public HaloMode {
                    chaseState = 0;
                 };
 		
-		uint32_t * step();
+		void step(Adafruit_NeoPixel* pixels);
 	private:
                 int chaseState;
 };

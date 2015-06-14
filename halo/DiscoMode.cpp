@@ -1,7 +1,7 @@
 #include "Arduino.h"
 #include "DiscoMode.h"
 
-uint32_t * DiscoMode::step() {
+void DiscoMode::step(Adafruit_NeoPixel* pixels) {
   
   if (discoState > 1024) {
     discoState = 0;
@@ -26,12 +26,10 @@ uint32_t * DiscoMode::step() {
       color = 0;
     }
     
-    pixels[i] = color;
+    pixels->setPixelColor(i, color);
   }
 
   discoState++;
-  
-  return pixels;
 
 }
 

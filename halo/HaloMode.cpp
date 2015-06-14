@@ -1,13 +1,7 @@
 #include "Arduino.h"
 #include "HaloMode.h"
 
-uint32_t HaloMode::pixels[NUMPIXELS];
-
 HaloMode::HaloMode() {
-  
-        for (int i=0; i<NUMPIXELS; i++) {
-          pixels[i] = 0; 
-        }
 }
 
 uint32_t HaloMode::rgb(uint8_t r, uint8_t g, uint8_t b) {

@@ -125,8 +125,7 @@ void loop() {
   delay(PIXEL_DELAY);
 }
 
-void updatePixels() {
-  uint32_t * pix; 
+void updatePixels() { 
 
   int potReading = map(analogRead(POT_PIN), 0, 1024, 265, 10);
   int brightness = constrain(potReading, 0, 255);
@@ -135,21 +134,16 @@ void updatePixels() {
 
   switch (mode) {
     case 1: 
-      pix = fire.step();
+      fire.step(&halo);
       break;
     case 2: 
-      pix = chase.step();
+      chase.step(&halo);
       break;
     case 3: 
-      pix = rainbow.step();
+      rainbow.step(&halo);
       break;
     case 4: 
-      pix = disco.step();
-  }
-  
-  for (int i=0; i<NUMPIXELS; i++) {
-    halo.setPixelColor(i, pix[i]);
-    wing.setPixelColor(i, pix[i]);
+      disco.step(&halo);
   }
 
   halo.show(); // This sends the updated pixel color to the hardware.

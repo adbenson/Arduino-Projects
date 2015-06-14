@@ -1,8 +1,8 @@
 #include "Arduino.h"
 #include "FireWaveMode.h"
 
-uint32_t * FireWaveMode::step() {
-
+void FireWaveMode::step(Adafruit_NeoPixel* pixels) {
+  
   for(int i=0;i<NUMPIXELS;i++){
     double level = levels[i];
 
@@ -30,11 +30,9 @@ uint32_t * FireWaveMode::step() {
 
     levels[i] = level;    
 
-    pixels[i] = rgb(235 * level, 255 * level * level, 50 * level * level);
-
+    uint32_t color = rgb(235 * level, 255 * level * level, 50 * level * level);
+    pixels->setPixelColor(i, color);
   }
-  
-  return pixels;
 
 }
 

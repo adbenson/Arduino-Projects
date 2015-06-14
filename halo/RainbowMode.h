@@ -13,7 +13,7 @@ class RainbowMode : public HaloMode {
                    rainbowState = 0;
                 };
 		
-		uint32_t * step();
+		void step(Adafruit_NeoPixel* pixels);
 	private:
                 int rainbowState;
 };

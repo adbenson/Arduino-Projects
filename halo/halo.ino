@@ -9,17 +9,21 @@
 /* PIN ASSIGNMENT */
 
 //Input
-#define BUTTON_POWER      A0
-#define BUTTON_WINGSUP    A1 
-#define BUTTON_MODE       A2 
-#define BUTTON_WINGSDOWN  A3 
+#define BUTTON_POWER      0
+#define BUTTON_WINGSUP    1 
+#define BUTTON_MODE       2 
+#define BUTTON_WINGSDOWN  3 
 
-#define WING_POSITION     A4
-#define BRIGHTNESS_CTRL   A5
+#define WING_POSITION     4
+#define BRIGHTNESS_CTRL   5
 
 //Output
 #define HALO_OUT          3
 #define WINGS_OUT         4
+
+#define WING_SPEED        5
+#define WING_OUT_A        6
+#define WING_OUT_B        8 
 
 #define DIAGNOSTIC_LED  13 
 
@@ -38,6 +42,10 @@
 
 #define MODES 4
 
+#define WINGS_STOP 0
+#define WINGS_UP   1
+#define WINGS_DOWN 2
+
 boolean running = true;
 
 FireMode fire;
@@ -53,9 +61,16 @@ int mode = 1;
 
 boolean buttonHistory[4][3];
 
+int wingState = -1;
+
 void setup() {   
   
   pinMode(DIAGNOSTIC_LED, OUTPUT);
+  
+  pinMode(WING_SPEED, OUTPUT);
+  pinMode(WING_OUT_A, OUTPUT);
+  pinMode(WING_OUT_B, OUTPUT);
+  wingControl(WINGS_STOP);
 
   halo.begin(); // This initializes the NeoPixel library.
   wing.begin();
@@ -73,10 +88,21 @@ void setup() {
   }
 }
 
+void diag(boolean on) {
+ digitalWrite(DIAGNOSTIC_LED, on? HIGH : LOW);
+}
+
 boolean buttonPressed(int button) {
   
   //Only return true once for each press, and only after it has been pressed for at least one cycle.
   boolean pressed = buttonHistory[button][0] && buttonHistory[button][1] && !buttonHistory[button][2]; 
+
+  return pressed;
+}
+
+boolean buttonDown(int button) {
+  
+  boolean pressed = buttonHistory[button][0] && buttonHistory[button][1];
 
   return pressed;
 }
@@ -118,11 +144,47 @@ void updateMode() {
    
 }
 
+void updateWingControl() {
+  
+  if (buttonDown(BUTTON_WINGSUP)) {
+    wingControl(WINGS_UP);
+  }
+  else if (buttonDown(BUTTON_WINGSDOWN)) {
+    wingControl(WINGS_DOWN);
+  }
+  else {
+    wingControl(WINGS_STOP);
+  }
+  
+}
+
+void wingControl(int state) {
+ 
+  if (wingState == state) {
+    return;
+  }
+
+  int outA = (state == WINGS_STOP || state == WINGS_DOWN)? LOW : HIGH;
+  int outB = (state == WINGS_STOP || state == WINGS_UP)? LOW : HIGH;
+  
+  digitalWrite(WING_SPEED, LOW);
+  digitalWrite(WING_OUT_A, outA);
+  digitalWrite(WING_OUT_B, outB);
+  
+  if (state != WINGS_STOP) {
+    digitalWrite(WING_SPEED, HIGH);
+  }
+  
+  wingState = state;
+}
+
 void loop() { 
   
   updateButtonState();
   
   updatePower();
+  
+  updateWingControl();
   
   if (running) {
     updateMode();

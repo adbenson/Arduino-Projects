@@ -1,14 +1,13 @@
-
 #include <Adafruit_NeoPixel.h>
 
 #include "FireMode.h"
 #include "RainbowMode.h"
 #include "ChaseMode.h"
 #include "DiscoMode.h"
+#include "FireWaveMode.h"
 
 #define HALO_OUT      3
-#define LWING_OUT     4
-#define RWING_OUT     5
+#define WINGS_OUT     4
 
 #define BUTTON_A  0
 #define BUTTON_B  1 
@@ -36,12 +35,13 @@
 boolean running = true;
 
 FireMode fire;
+FireWaveMode fireWave;
 ChaseMode chase;
 RainbowMode rainbow;
 DiscoMode disco;
 
 Adafruit_NeoPixel halo = Adafruit_NeoPixel(NUMPIXELS, HALO_OUT, NEO_GRB + NEO_KHZ800);
-Adafruit_NeoPixel wing = Adafruit_NeoPixel(NUMPIXELS, LWING_OUT, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel wing = Adafruit_NeoPixel(NUMPIXELS, WINGS_OUT, NEO_GRB + NEO_KHZ800);
 
 int mode = 1;
 
@@ -55,6 +55,7 @@ void setup() {
   wing.begin();
 
   fire = FireMode();
+  fireWave = FireWaveMode();
   chase = ChaseMode();
   rainbow = RainbowMode();
   disco = DiscoMode();
@@ -127,7 +128,9 @@ void loop() {
 
 void updatePixels() { 
 
-  int potReading = map(analogRead(POT_PIN), 0, 1024, 265, 10);
+  //We undershoot a little to ensure that when the knob is all the way 
+  // to either extreme it actually registers as full on or full off
+  int potReading = map(analogRead(POT_PIN), 1, 1023, 255, 0);
   int brightness = constrain(potReading, 0, 255);
   halo.setBrightness(brightness);
   wing.setBrightness(brightness);
@@ -135,17 +138,23 @@ void updatePixels() {
   switch (mode) {
     case 1: 
       fire.step(&halo);
+      fireWave.step(&wing);
       break;
     case 2: 
-      chase.step(&halo);
+      disco.step(&halo);
+      disco.step(&wing);
       break;
     case 3: 
       rainbow.step(&halo);
+      rainbow.step(&wing);
       break;
     case 4: 
-      disco.step(&halo);
+      chase.step(&halo);
+      chase.step(&wing);
   }
+  
 
+  
   halo.show(); // This sends the updated pixel color to the hardware.
   wing.show(); // This sends the updated pixel color to the hardware.
 }

@@ -6,21 +6,27 @@
 #include "DiscoMode.h"
 #include "FireWaveMode.h"
 
-#define HALO_OUT      3
-#define WINGS_OUT     4
+/* PIN ASSIGNMENT */
 
-#define BUTTON_A  0
-#define BUTTON_B  1 
-#define BUTTON_C  2 
-#define BUTTON_D  3 
+//Input
+#define BUTTON_A        A0
+#define BUTTON_B        A1 
+#define BUTTON_C        A2 
+#define BUTTON_D        A3 
 
-#define DIAG  13 
+#define WING_POSITION   A4
+#define BRIGHTNESS_CTRL A5
 
-#define POT_PIN  A5
+//Output
+#define HALO_OUT        3
+#define WINGS_OUT       4
+
+#define DIAGNOSTIC_LED  13 
+
+/* OTHER STUFF */
 
 #define BUTTON_THRESHOLD 50
 
-// How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      60
 
 #define LAST           NUMPIXELS-1
@@ -49,7 +55,7 @@ boolean buttonHistory[4][3];
 
 void setup() {   
   
-  pinMode(DIAG, OUTPUT);
+  pinMode(DIAGNOSTIC_LED, OUTPUT);
 
   halo.begin(); // This initializes the NeoPixel library.
   wing.begin();
@@ -130,7 +136,7 @@ void updatePixels() {
 
   //We undershoot a little to ensure that when the knob is all the way 
   // to either extreme it actually registers as full on or full off
-  int potReading = map(analogRead(POT_PIN), 1, 1023, 255, 0);
+  int potReading = map(analogRead(BRIGHTNESS_CTRL), 1, 1023, 255, 0);
   int brightness = constrain(potReading, 0, 255);
   halo.setBrightness(brightness);
   wing.setBrightness(brightness);

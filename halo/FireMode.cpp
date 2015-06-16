@@ -19,8 +19,8 @@ void FireMode::step(Adafruit_NeoPixel* pixels) {
     int r = random(choose);
     if (r == 0) {
       goals[i] = MAX;        
-      pullAdjacent(i-1, 1); 
-      pullAdjacent(i+1, 1); 
+      pullAdjacent(i-1, MAX); 
+      pullAdjacent(i+1, MAX); 
     }
 
     levels[i] = level;    

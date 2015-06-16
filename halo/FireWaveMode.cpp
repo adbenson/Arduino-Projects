@@ -7,10 +7,12 @@ void FireWaveMode::step(Adafruit_NeoPixel* pixels) {
     double level = levels[i];
 
     if (level < goals[i]) {
-      level = min(level + rise, MAX);
+      //watch out for overflow!
+      long newLevel = (long)level + rise;
+      level = min(newLevel, MAX);
       if (level > (MAX - MAX/100)) {
         
-        pullAdjacent(i+1, 1 + dropoff); 
+        pullAdjacent(i+1, MAX); 
       }
     }
     else {
@@ -22,8 +24,8 @@ void FireWaveMode::step(Adafruit_NeoPixel* pixels) {
     int r = random(choose);
     if (r == 0) {
       goals[i] = MAX;       
-      pullAdjacent(i-1, 1); 
-      pullAdjacent(i+1, 1); 
+      pullAdjacent(i-1, MAX); 
+      pullAdjacent(i+1, MAX); 
     }
 
     levels[i] = level;    
@@ -39,10 +41,10 @@ void FireWaveMode::pullAdjacent(int i, int pull) {
   i = ((i<0)? LAST : i);
   i = (i>LAST)? 0 : i;
 
-  int level = pull - dropoff;
+  int level = pull;
   if (goals[i] < level) {
     goals[i] = level;
-    pullAdjacent(i-1, level);
-    pullAdjacent(i+1, level); 
+    pullAdjacent(i-1, level - dropoff);
+    pullAdjacent(i+1, level - dropoff); 
   }
 }

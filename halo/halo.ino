@@ -9,17 +9,17 @@
 /* PIN ASSIGNMENT */
 
 //Input
-#define BUTTON_A        A0
-#define BUTTON_B        A1 
-#define BUTTON_C        A2 
-#define BUTTON_D        A3 
+#define BUTTON_POWER      A0
+#define BUTTON_WINGSUP    A1 
+#define BUTTON_MODE       A2 
+#define BUTTON_WINGSDOWN  A3 
 
-#define WING_POSITION   A4
-#define BRIGHTNESS_CTRL A5
+#define WING_POSITION     A4
+#define BRIGHTNESS_CTRL   A5
 
 //Output
-#define HALO_OUT        3
-#define WINGS_OUT       4
+#define HALO_OUT          3
+#define WINGS_OUT         4
 
 #define DIAGNOSTIC_LED  13 
 
@@ -93,7 +93,7 @@ void updateButtonState() {
 
 void updatePower() {
  
-  if (buttonPressed(BUTTON_A)) {
+  if (buttonPressed(BUTTON_POWER)) {
     running = !running; 
     
       if (!running) {
@@ -109,7 +109,7 @@ void updatePower() {
 
 void updateMode() {
  
-  if (buttonPressed(BUTTON_C)) {
+  if (buttonPressed(BUTTON_MODE)) {
     mode++;
     if (mode > MODES) {
        mode = 1;

@@ -117,6 +117,7 @@ void loop() {
     
     if (on) {
       lowBound = analogRead(POT_PIN);
+      highBound = 0;
     } else {
       pixels.setBrightness(0);
       pixels.show();

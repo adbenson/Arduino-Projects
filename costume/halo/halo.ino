@@ -22,8 +22,7 @@
 #define WINGS_OUT         4
 
 #define WING_SPEED        5
-#define WING_OUT_A        6
-#define WING_OUT_B        8 
+#define WING_DIR          6
 
 #define DIAGNOSTIC_LED  13 
 
@@ -40,11 +39,11 @@
 #define PIXEL_DELAY 10
 #define SLEEP_DELAY  200
 
-#define MODES 4
+#define MODES 2
 
-#define WINGS_STOP 0
-#define WINGS_UP   1
-#define WINGS_DOWN 2
+#define WINGS_STOP -1
+#define WINGS_UP    LOW
+#define WINGS_DOWN  HIGH
 
 boolean running = true;
 
@@ -59,17 +58,17 @@ Adafruit_NeoPixel wing = Adafruit_NeoPixel(NUMPIXELS, WINGS_OUT, NEO_GRB + NEO_K
 
 int mode = 1;
 
-boolean buttonHistory[4][3];
+boolean buttonHistory[4][4];
 
-int wingState = -1;
+int wingState = WINGS_STOP;
+int wingSpeed = 0;
 
 void setup() {   
   
   pinMode(DIAGNOSTIC_LED, OUTPUT);
   
   pinMode(WING_SPEED, OUTPUT);
-  pinMode(WING_OUT_A, OUTPUT);
-  pinMode(WING_OUT_B, OUTPUT);
+  pinMode(WING_DIR, OUTPUT);
   wingControl(WINGS_STOP);
 
   halo.begin(); // This initializes the NeoPixel library.
@@ -82,14 +81,14 @@ void setup() {
   disco = DiscoMode();
   
   for(int button = 0; button < BUTTONS; button++) {
-    for (int state = 0; state < 2; state++) {
+    for (int state = 0; state < 3; state++) {
       buttonHistory[button][state] = false;
     }
   }
 }
 
 void diag(boolean on) {
- digitalWrite(DIAGNOSTIC_LED, on? HIGH : LOW);
+  digitalWrite(DIAGNOSTIC_LED, on? HIGH : LOW);
 }
 
 boolean buttonPressed(int button) {
@@ -101,16 +100,24 @@ boolean buttonPressed(int button) {
 }
 
 boolean buttonDown(int button) {
+  int pressed = 0;
   
-  boolean pressed = buttonHistory[button][0] && buttonHistory[button][1];
+  for (int time = 0; time < 4; time++) {
+    if (buttonHistory[button][time]) {
+     pressed++;
+    } 
+  }
+  
+//  boolean pressed = (buttonHistory[button][0] && buttonHistory[button][1]) || (buttonHistory[button][1] && buttonHistory[button][2]);
 
-  return pressed;
+  return pressed >= 2;
 }
 
 void updateButtonState() {
   for(int button = 0; button < BUTTONS; button++) {
     boolean current = analogRead(button) > BUTTON_THRESHOLD;
-  
+
+    buttonHistory[button][3] = buttonHistory[button][2];  
     buttonHistory[button][2] = buttonHistory[button][1];
     buttonHistory[button][1] = buttonHistory[button][0];
     buttonHistory[button][0] = current;
@@ -129,9 +136,7 @@ void updatePower() {
         wing.show();
       }
   }
-   
 }
-
 
 void updateMode() {
  
@@ -141,11 +146,17 @@ void updateMode() {
        mode = 1;
     }
   }
-   
+}
+
+int readBrightness(int pin, int bottom, int top) {
+  int potReading = map(analogRead(pin), bottom, top, 255, 0);
+  int potBrightness = constrain(potReading, 0, 255);
+
+  return potBrightness;
 }
 
 void updateWingControl() {
-  
+    
   if (buttonDown(BUTTON_WINGSUP)) {
     wingControl(WINGS_UP);
   }
@@ -153,29 +164,17 @@ void updateWingControl() {
     wingControl(WINGS_DOWN);
   }
   else {
-    wingControl(WINGS_STOP);
+    wingSpeed = 0;
+    digitalWrite(WING_SPEED, LOW);  
   }
-  
 }
 
 void wingControl(int state) {
- 
-  if (wingState == state) {
-    return;
-  }
+  wingSpeed += 16;
+  wingSpeed = constrain(wingSpeed, 16, 255);
 
-  int outA = (state == WINGS_STOP || state == WINGS_DOWN)? LOW : HIGH;
-  int outB = (state == WINGS_STOP || state == WINGS_UP)? LOW : HIGH;
-  
-  digitalWrite(WING_SPEED, LOW);
-  digitalWrite(WING_OUT_A, outA);
-  digitalWrite(WING_OUT_B, outB);
-  
-  if (state != WINGS_STOP) {
-    digitalWrite(WING_SPEED, HIGH);
-  }
-  
-  wingState = state;
+  digitalWrite(WING_DIR, state);
+  analogWrite(WING_SPEED, wingSpeed);
 }
 
 void loop() { 
@@ -185,6 +184,9 @@ void loop() {
   updatePower();
   
   updateWingControl();
+
+  halo.setBrightness(readBrightness(BRIGHTNESS_CTRL, 1, 1023));
+  wing.setBrightness(readBrightness(WING_POSITION, 1, 400));
   
   if (running) {
     updateMode();
@@ -195,13 +197,6 @@ void loop() {
 }
 
 void updatePixels() { 
-
-  //We undershoot a little to ensure that when the knob is all the way 
-  // to either extreme it actually registers as full on or full off
-  int potReading = map(analogRead(BRIGHTNESS_CTRL), 1, 1023, 255, 0);
-  int brightness = constrain(potReading, 0, 255);
-  halo.setBrightness(brightness);
-  wing.setBrightness(brightness);
 
   switch (mode) {
     case 1: 

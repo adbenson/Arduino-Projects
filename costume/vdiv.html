@@ -1,0 +1,82 @@
+Flex
+<input id="flex" type="range" min="25" max="75" value="25" onchange="recalc()"/><span id="fout"></span><br/>
+Comp<br/>
+<input id="comp" type="range" min="25" max="75" value="50" onchange="recalc()"/><span id="cout"></span><br/>
+Trim<br/>
+<input id="trim" type="range" min="0" max="100" value="0" onchange="recalc()"/><span id="tout"></span><br/>
+Out<br/>
+<input id="out" type="text" onchange="recalc()"/><br/>
+
+<script type="text/javascript">
+"use strict";
+
+const names = ["flexMin", "flexMax", "comp", "trimMin", "trimMax"];
+
+    function createRange(name, min, max, init) {
+        const label = document.createElement("span");
+        const el = document.createElement("input");
+        
+        function update() {
+            label.innerHTML = el.value;
+        }    
+    
+        const container = document.createElement("div");
+        
+        el.setAttribute("type", "range");
+        el.setAttribute("min", min);
+        el.setAttribute("max", max);
+        el.setAttribute("value", init);
+        el.onchange = update;
+        
+        container.appendChild(label);
+        container.appendChild(document.createElement("br"));
+        container.appendChild(el);
+        
+        document.appendChild(container);
+        
+        return el;
+    }
+
+const inputs = names.map(function (name) {
+
+    const min = createRange(name, 25, 75, 25);
+    const max = createRange(name, 25, 75, 75);
+
+    return {
+        name: name,
+        min: min,
+        max: max
+    };
+});
+
+var flex = document.getElementById("flex");
+var fout = document.getElementById("fout");
+
+
+var comp = document.getElementById("comp");
+var cout = document.getElementById("cout");
+
+
+var trim = document.getElementById("trim");
+var tout = document.getElementById("tout");
+
+
+var out = document.getElementById("out");
+
+function recalc() {
+
+    fout.innerHTML = flex.value;
+    cout.innerHTML = comp.value;
+    tout.innerHTML = trim.value;
+
+    let r1 = +flex.value;
+    let r2 = +comp.value;
+    
+    out.value = (r2 / (r1 + r2)) * 5
+    
+    console.log("foo");
+}
+
+setTimeout(recalc, 100);
+
+</script>

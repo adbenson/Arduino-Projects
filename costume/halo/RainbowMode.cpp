@@ -3,8 +3,8 @@
 
 void RainbowMode::step(Adafruit_NeoPixel* pixels) {
   
-  if (rainbowState >= 256*5) {
-    rainbowState = 0; 
+  if (rainbowState < 0) {
+    rainbowState = 256*5; 
   }
 
   for(int i=0; i< NUMPIXELS; i++) {
@@ -12,6 +12,6 @@ void RainbowMode::step(Adafruit_NeoPixel* pixels) {
     pixels->setPixelColor(i, color);
   }
 
-  rainbowState++;
+  rainbowState--;
 
 }

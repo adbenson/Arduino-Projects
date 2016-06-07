@@ -15,8 +15,9 @@ void DiscoMode::step(Adafruit_NeoPixel* pixels) {
 
   uint32_t color;
   for (int i=0; i < NUMPIXELS; i++) {
-   
-    int iOffset = ((offset / 32) %2 == 0)? i + offset : i - offset;
+    int a = NUMPIXELS - i;
+    
+    int iOffset = ((offset / 32) %2 == 0)? a - offset : a + offset;
     
     int quad = quadrant(iOffset);
     

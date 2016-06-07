@@ -13,7 +13,7 @@
 #define SLEEP_DELAY  200
 
 // How many NeoPixels are attached to the Arduino?
-#define NUMPIXELS      7
+#define NUMPIXELS      60
 #define LAST           NUMPIXELS-1
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, OUT_PIN, NEO_GRB + NEO_KHZ800);
@@ -26,13 +26,15 @@ double minLevel = 0.15;
 int choose = 120;
 double potMax = 850;
 
+int chaseState = 0;
+
 double levels [NUMPIXELS];
 double goals [NUMPIXELS];
 
 boolean hasBeenPressed = false;
 int previousButton;
 
-boolean on = false ;
+boolean on = true;
 
 void setup() { 
   if(F_CPU == 16000000) clock_prescale_set(clock_div_1);
@@ -47,44 +49,47 @@ void setup() {
   }
 }
 
-void pullAdjacent(int i, double pull) {
-  i = ((i<0)? LAST : i);
-  i = (i>LAST)? 0 : i;
-
-  double level = pull - dropoff;
-  if (goals[i] < level) {
-    goals[i] = level;
-    pullAdjacent(i-1, level);
-    pullAdjacent(i+1, level); 
-  }
+uint32_t rgb(uint8_t r, uint8_t g, uint8_t b) {
+  return ((uint32_t)r << 16) | ((uint32_t)g <<  8) | b;
 }
 
-void fire() {
-  for(int i=0;i<NUMPIXELS;i++){
-    double level = levels[i];
+void chase() {
 
-    if (level < goals[i]) {
-      level = min(level + rise, 1);
-    }
-    else {
-      goals[i] = 0;
-      level = max(level - fall, minLevel);
-    }
-
-    //    Serial.println(levels[i]);
-    int r = random(choose);
-    if (r == 0 || (i >= 30 && i <= 31 && r < (choose/10))) {
-      double goal = random(level * 1000, 1000) / 1000.0;
-      goals[i] = 1;        
-      pullAdjacent(i-1, 1); 
-      pullAdjacent(i+1, 1); 
-    }
-
-    levels[i] = level;    
-    pixels.setPixelColor(i, pixels.Color(255, 255 * level * level, 50 * level * level));
-
+  if (chaseState >= 6 * 3) {
+    chaseState = 0;
   }
+
+  uint32_t color;
+  for (int i=0; i < NUMPIXELS; i++) {
+    int offset = (i + (chaseState/3)) % 6;
+    switch (offset) {
+    case 0: 
+      color = rgb(127, 0, 0); 
+      break;
+    case 1: 
+      color = rgb(127, 63, 0); 
+      break;
+    case 2: 
+      color = rgb(127, 127, 0); 
+      break;
+    case 3: 
+      color = rgb(0, 127, 0); 
+      break;
+    case 4: 
+      color = rgb(0, 0, 255); 
+      break;
+    case 5: 
+      color = rgb(63, 0, 255); 
+      break;
+    }
+    
+    pixels.setPixelColor(i, color);
+  }
+
+  chaseState++;
+  
 }
+
 
 boolean buttonPressed() {
   boolean pressed = false;
@@ -124,13 +129,9 @@ void loop() {
     return; 
   }
 
-  int flex = analogRead(POT_PIN);
-  //map(flex, 650, 800, 0, 255);
-  int brightness = map(flex, 750, 850, 0, 255);
-  brightness = 255 - constrain(brightness, 0, 255);
-  pixels.setBrightness(brightness);
+  pixels.setBrightness(255);
 
-  fire();
+  chase();
 
   pixels.show(); // This sends the updated pixel color to the hardware.
 

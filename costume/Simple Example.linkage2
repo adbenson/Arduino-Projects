@@ -1,0 +1,43 @@
+<linkage2>
+	<program zoom="1.000000" xoffset="270" yoffset="167" scalefactor="1.000000" units="Millimeters" viewlayers="2147483647" editlayers="2147483647"/>
+	<connector id="0" selected="false" layer="16" x="156.734694" y="182.806122" anchor="true" color="16711680"/>
+	<connector id="1" selected="false" layer="16" x="204.816327" y="-69.724490" color="12632064"/>
+	<connector id="2" selected="false" layer="16" x="463.286829" y="117.551020" anchor="true" color="32768"/>
+	<connector id="3" selected="false" layer="16" x="463.286829" y="-8.183673" anchor="true" color="16711808"/>
+	<connector id="4" selected="false" layer="16" x="362.653061" y="-78.367347" color="6854344"/>
+	<connector id="5" selected="false" layer="16" x="235.102041" y="-47.367347" color="13158600"/>
+	<connector id="6" selected="false" layer="16" x="78.367347" y="156.734694" color="16744448"/>
+	<connector id="7" selected="false" layer="16" x="29.551020" y="133.551020" color="11272364"/>
+	<connector id="8" selected="false" layer="16" x="-335.000000" y="-39.183673" color="8439808"/>
+	<connector id="9" selected="false" layer="16" x="281.102041" y="-15.000000" color="13158600"/>
+	<Link id="1" selected="false" layer="16" linesize="1" actuator="true" throw="168.519622" cpm="25.000000" color="12632064">
+		<connector id="1"/>
+		<connector id="0"/>
+	</Link>
+	<Link id="2" selected="false" layer="16" linesize="1" solid="true" color="32768">
+		<connector id="1"/>
+		<connector id="2"/>
+		<connector id="5"/>
+		<connector id="9"/>
+	</Link>
+	<Link id="4" selected="false" layer="16" linesize="1" color="6854344">
+		<connector id="3"/>
+		<connector id="4"/>
+	</Link>
+	<Link id="0" selected="false" layer="16" linesize="1" solid="true" color="16711680">
+		<connector id="6"/>
+		<connector id="7"/>
+		<connector id="8"/>
+	</Link>
+	<Link id="3" selected="false" layer="16" linesize="1" color="16711808">
+		<connector id="5"/>
+		<connector id="7"/>
+	</Link>
+	<Link id="5" selected="false" layer="16" linesize="1" solid="true" color="11012476">
+		<connector id="6"/>
+		<connector id="9"/>
+		<connector id="4"/>
+	</Link>
+	<selected>
+	</selected>
+</linkage2>

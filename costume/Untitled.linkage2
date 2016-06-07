@@ -1,0 +1,43 @@
+<linkage2>
+	<program zoom="1.000000" xoffset="-391" yoffset="-43" scalefactor="1.000000" units="Millimeters" viewlayers="2147483647" editlayers="2147483647"/>
+	<connector id="0" selected="false" layer="16" x="-359.653061" y="223.326531" anchor="true" color="16711680"/>
+	<connector id="1" selected="false" layer="16" x="-351.538612" y="131.775510" anchor="true" color="12632064"/>
+	<connector id="2" selected="false" layer="16" x="-392.320780" y="50.755693" color="32768"/>
+	<connector id="3" selected="false" layer="16" x="-411.116145" y="-48.114374" color="13158600"/>
+	<connector id="4" selected="false" layer="16" x="-387.438758" y="260.379590" color="6854344"/>
+	<connector id="5" selected="false" layer="16" x="-389.933200" y="-15.639149" color="13158600"/>
+	<connector id="6" selected="false" layer="16" x="-509.222023" y="-293.691261" color="16744448"/>
+	<connector id="7" selected="false" layer="16" x="-407.371065" y="182.935312" color="13158600"/>
+	<connector id="10" selected="false" layer="16" x="18.346939" y="-281.653061" anchor="true" color="12615935"/>
+	<connector id="8" selected="false" layer="16" x="-451.331005" y="71.419556" color="13158600"/>
+	<Link id="3" selected="false" layer="16" linesize="1" solid="true" color="16711808">
+		<connector id="0"/>
+		<connector id="2"/>
+		<connector id="3"/>
+	</Link>
+	<Link id="0" selected="false" layer="16" linesize="1" solid="true" color="16711680">
+		<connector id="4"/>
+		<connector id="2"/>
+		<connector id="5"/>
+	</Link>
+	<Link id="2" selected="false" layer="16" linesize="1" color="32768">
+		<connector id="1"/>
+		<connector id="5"/>
+	</Link>
+	<Link id="1" selected="false" layer="16" linesize="1" solid="true" color="12632064">
+		<connector id="6"/>
+		<connector id="4"/>
+		<connector id="7"/>
+		<connector id="8"/>
+	</Link>
+	<Link id="4" selected="false" layer="16" linesize="1" color="6854344">
+		<connector id="3"/>
+		<connector id="7"/>
+	</Link>
+	<Link id="5" selected="false" layer="16" linesize="1" solid="true" actuator="true" throw="386.857584" cpm="15.000000" color="11012476">
+		<connector id="10"/>
+		<connector id="3"/>
+	</Link>
+	<selected>
+	</selected>
+</linkage2>
